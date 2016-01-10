@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="solid_red">#ffff0000</color>
+    <color name="solid_blue">#ff0000ff</color>
+    <color name="solid_green">#ff00ff00</color>
+    <color name="solid_yellow">#ffffff00</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="guide_background">#FFFFF7</color>
+    <color name="blue">#ff3300ff</color>
+    <color name="blue_face">#0080ff</color>
+    <color name="sellpagetitlebottom">#4696d3</color>
+    <color name="orange">#fffb9d08</color>
+    <color name="dblue">#ff075c8d</color>
+    <color name="updark">#77f0f0f0</color>
+    <color name="red">#ffdc0000</color>
+    <color name="blue2">#ff215300</color>
+    <color name="blue3">#ff00368b</color>
+    <color name="grey">#fff1f1f1</color>
+    <color name="hightlightcolor">#fdf3d6</color>
+    <color name="login_text">#badff9</color>
+    <!-- 首页 -->
+    <!-- 首页背景颜色 -->
+    <color name="all_backgroud">#e6e6e6</color>
+    <color name="start_page">#277fc0</color>
+    <!-- 首页分割线颜色 -->
+    <color name="homepage_deviderline">#c4c4c4</color>
+    <!-- 首页字体颜色 -->
+    <color name="homepage_textcolor">#696969</color>
+    <color name="homepage_bottomtextcolorh">#4696d3</color>
+    <color name="homepage_bottomtextcolord">#8d95a4</color>
+    <!-- 登录页字体颜色 -->
+    <color name="login_et_textcolor">#333333</color>
+    <color name="login_ck_textcolor">#ececec</color>
+    <color name="login_ver_textclor">#b9cbdf</color>
+
+    <!-- 半透明 -->
+    <color name="tanl">#70000000</color>
+    <!-- 半透明 -->
+    <color name="tanl2">#70000000</color>
+    <!-- 橘黄 -->
+    <color name="orange_dan">#fffff0</color>
+
+    <!-- 绿色 -->
+    <color name="green">#69932A</color>
+    <!-- 详情页字体颜色 -->
+    <color name="detail_text_color">#000000</color>
+    <!-- 警告颜色 -->
+    <color name="alert_color_red">#cc0000</color>
+    <color name="alert_color_black">#000000</color>
+
+    <!-- hite的颜色 -->
+    <color name="hint_color">#a2a2a2</color>
+
+    <!-- 发布卖车买车填入数字后的颜色 -->
+    <color name="fill_text_color">#ff0000</color>
+
+    <!-- 蓝色 -->
+    <color name="blue4">#1b6ed4</color>
+
+    <!-- 分割线 -->
+    <color name="deviderline">#c7c7c7</color>
+
+    <!-- 发布买车卖车输入框 -->
+    <color name="input_color">#333333</color>
+    <color name="input_bg_color">#fafafa</color>
+    <!-- 淡灰 -->
+    <color name="v_devider">#c2c2c2</color>
+    <color name="record_player_bg_color">#464646</color>
+    <color name="phone_list_item_bg_color">#F6F0BE</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_helf">#60000000</color>
+    <color name="divider_line_color">#ebebeb</color>
+
+    <!-- 搜索框下拉选项的背景色及分割条 -->
+    <color name="search_pop_item_bg_d">#f1f1f1</color>
+    <color name="search_pop_item_bg_s">#e5e5e5</color>
+    <color name="search_pop_item_diveder">#D4D4D4</color>
+
+    <!-- 对话框里的颜色 -->
+    <color name="dialog_text_color">#696969</color>
+    <color name="dialog_text_green_color">#7ba842</color>
+    <color name="dialog_item_selected_color">#6F9929</color>
+    <color name="dialog_hint_color">#A2A2A2</color>
+    <color name="text_normal_color">#696969</color>
+    <color name="text_comment_color">#979797</color>
+    <color name="edit_text_color">#8d8d8d</color>
+
+    <!-- 带索引列表项的颜色 -->
+    <color name="index_select_item_tv">#585F62</color>
+    <color name="index_select_item_alpha_bg">#D3DADD</color>
+
+    <!-- 通讯录中的颜色 -->
+    <color name="address_list_title_detail">#BCBCBC</color>
+    <color name="address_list_name_color">#333333</color>
+    <color name="address_list_role_color">#8D8D8D</color>
+
+    <!-- 买车详情中底部红色按钮字体颜色 -->
+    <color name="buy_car_detail_btn_text_red_color">#B50000</color>
+
+    <!-- activity背景色 -->
+    <color name="activity_bg">#D0D0D0</color>
+    <color name="gray">#CCCCCC</color>
+    <color name="list_diveder">#D4D4D4</color>
+    <color name="price_evaluation_text_color">#333333</color>
+    <!-- 缓存更新显示 -->
+    <color name="cache_background">#00000000</color>
+    <color name="cache_text_backgroud">#009cff</color>
+
+    <!-- VIN码查询页面 -->
+    <color name="vin_search_list_item_unfocus_bg">#fafafa</color>
+    <color name="vin_search_list_item_focus_bg">#eeeeee</color>
+    <color name="vin_search_text_color">#0d0d0d</color>
+    <color name="vin_search_result_text_color">#696969</color>
+
+    <!-- VIN码查询历史页面 -->
+    <color name="vin_history_list_item_unfocus_bg">#f1f1f1</color>
+    <color name="vin_history_list_item_focus_bg">#eeeeee</color>
+    <color name="vin_history_vin_text_color">#333333</color>
+    <color name="vin_history_other_text_color">#8d8d8d</color>
+
+    <!-- 车辆vin码信息页 -->
+    <color name="vin_car_info_unselected_bg">#ececec</color>
+    <color name="vin_car_info_selected_bg">#d9d9d9</color>
+    <color name="vin_car_info_divider">#cacaca</color>
+
+    <!-- 订单支付 -->
+    <color name="order_pay_result_text_color_grey">#696969</color>
+    <color name="order_pay_result_text_color_green">#47a22b</color>
+
+    <!-- 黑色标题栏的字体颜色 -->
+    <color name="title_bar_gray_text_color">#b1b1b1</color>
+
+    <!-- 显示图片页底部的黑色分割线 -->
+    <color name="image_gallary_back_divider">#414141</color>
+
+    <!-- 所有黑色页面的背景色 -->
+    <color name="all_black_bg">#212121</color>
+
+    <!-- 从图库中选择照片 -->
+    <color name="photo_album_divider_color">#282828</color>
+    <color name="photo_album_item_title_text_color">#959595</color>
+    <color name="photo_album_item_content_text_color">#464646</color>
+    <color name="photo_album_item_select_color">#121212</color>
+    <color name="photo_album_item_unselect_color">#1d1d1d</color>
+
+    <!-- 卖车详情-发布卖车审核 -->
+    <color name="dot_star">#d91f20</color>
+    <color name="tab_line">#247ac9</color>
+
+    <!-- 分享相关的颜色 -->
+    <color name="share_font">#333333</color>
+    <color name="share_divide">#d1d1d1</color>
+    <color name="share_back">#f7f7f7</color>
+
+    <!-- 我的卖车列表颜色 -->
+    <color name="my_sell_list_date">#959595</color>
+    <color name="my_sell_list_true">#cc0000</color>
+    <color name="my_sell_list_false">#20b039</color>
+    <color name="my_sell_list_wait">#287dff</color>
+
+    <!-- 车友圈创建内容底部菜单颜色 -->
+    <color name="bottom_menu_back">#e6ffffff</color>
+
+    <!-- 卖车结果页面 -->
+    <color name="priceassessment_result_red">#cc0000</color>
+    <color name="priceassessment_result_gray">#adadad</color>
+    <color name="priceassessment_result_blue">#1975ff</color>
+    <color name="priceassessment_result_dark">#333333</color>
+
+    <!-- 马赛克控件 -->
+    <color name="mosaicblue">#20bcff</color>
+    <color name="mosaicdark">#77f0f0f0</color>
+
+</resources>

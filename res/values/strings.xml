@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">马赛克</string>
+    <string name="action_settings">Settings</string>
+    <string name="back">返回</string>
+    <string name="drawPhoto_actionName">图片处理</string>
+    <string name="drawPhoto_draw">涂鸦</string>
+    <string name="drawPhoto_actioning">处理中..</string>
+
+    <string name="publishsell_publish">发布</string>
+    <string name="layout_draw_retake">撤销</string>
+    <string name="layout_draw_photo">涂马赛克</string>
+    <string name="layout_draw_finish">保存</string>
+</resources>

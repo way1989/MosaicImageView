@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:color="@color/sellpagetitlebottom" android:state_pressed="true"/>
+    <item android:color="@color/title_bar_gray_text_color"/>
+
+</selector>

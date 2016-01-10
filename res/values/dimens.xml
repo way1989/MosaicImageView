@@ -1,0 +1,205 @@
+<resources>
+
+    <!-- 原dimen.xml文件 -->
+    <dimen name="sell_car_padding_left">10dip</dimen>
+    <dimen name="sell_car_marg_left">10dip</dimen>
+    <dimen name="sell_car_phmin_height">36dip</dimen>
+    <dimen name="sell_car_phmargn_bottom">60dip</dimen>
+    <dimen name="assess_car_btmargn_bottom">90dip</dimen>
+    <dimen name="sell_car_phmargn_rl">13dip</dimen>
+    <dimen name="sell_car_marg_right">10dip</dimen>
+    <dimen name="sell_car_marg_top_buttom">8dip</dimen>
+    <dimen name="sell_car_marg_betton">5dip</dimen>
+    <dimen name="sell_car_marg_top">12dip</dimen>
+    <dimen name="sell_car_lay_height">36dip</dimen>
+    <dimen name="draft_bar_high">42dip</dimen>
+    <dimen name="title_bar_high">43dip</dimen>
+    <dimen name="title_bar_logo_bgheigh">32dip</dimen>
+    <dimen name="title_bar_logo_bgwith">42dip</dimen>
+    <dimen name="title_bar_logo_heigh">32dip</dimen>
+    <dimen name="title_bar_bt_bgwith">32dip</dimen>
+    <dimen name="title_bar_bt_bgheigh">32dip</dimen>
+    <dimen name="item_bt_bgwith">32dip</dimen>
+    <dimen name="item_bt_bgheigh">32dip</dimen>
+    <dimen name="layout_margen">15dip</dimen>
+    <!-- 标题上图标按钮的宽度包括了padding空出来的范围 -->
+    <dimen name="title_bar_logo_with">42dip</dimen>
+    <dimen name="title_bar_logo_contentheigh">35dip</dimen>
+    <dimen name="title_bar_bt_margin_top">4dip</dimen>
+    <dimen name="title_bar_bt_margin_left">10dip</dimen>
+    <dimen name="title_bar_bt_margin_right">10dip</dimen>
+    <!-- 为了扩大标题栏圆形图标的点击范围 -->
+    <dimen name="title_bar_bt_padding_h">10dip</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dip</dimen>
+    <dimen name="activity_vertical_margin">16dip</dimen>
+    <dimen name="gallery_item_w">73dip</dimen>
+    <dimen name="gallery_item_h">73dip</dimen>
+    <dimen name="listview_item_w">83dip</dimen>
+    <dimen name="listviet_item_pargin_right">7dip</dimen>
+    <dimen name="listviet_item_pargin_left">3dip</dimen>
+
+    <!-- 自定义对话框 -->
+    <dimen name="dialog_min_width">320dip</dimen>
+    <dimen name="dialog_title_bar_height">36dip</dimen>
+    <dimen name="dialog_title_bar_margin_left">8dip</dimen>
+    <dimen name="dialog_title_bar_drawable_padding_right">6dip</dimen>
+    <dimen name="dialog_msg_margin_vertical">34dip</dimen>
+    <dimen name="dialog_title_bar_text_size">15sp</dimen>
+
+    <!-- 用在对话框内容文字较多的情况 -->
+    <dimen name="dialog_msg_drawable_padding_right">10dip</dimen>
+    <dimen name="dialog_content_margin_horizontal">14dip</dimen>
+    <dimen name="dialog_btn_height">36dip</dimen>
+    <dimen name="dialog_btn_margin_bottom">10dip</dimen>
+    <dimen name="dialog_btn_spacing">6dip</dimen>
+    <dimen name="dialog_msg_text_size">13sp</dimen>
+    <dimen name="dialog_btn_text_size">13sp</dimen>
+
+    <!-- 卖车详情-发布卖车审核-对话框 -->
+    <dimen name="dialog_edit_margin_top">14dip</dimen>
+    <dimen name="dialog_edit_margin_bottom">10dip</dimen>
+    <dimen name="dialog_edit_margin_right">12dip</dimen>
+    <dimen name="dialog_edit_price_width">178dip</dimen>
+    <dimen name="dialog_edit_price_height">32dip</dimen>
+    <dimen name="dialog_edit_padding_horizontal">5dip</dimen>
+    <dimen name="dialog_edit_padding_vertical">3dip</dimen>
+    <dimen name="dialog_grid_item_width">84dip</dimen>
+    <dimen name="dialog_grid_item_spacing_horizontal">12dip</dimen>
+    <dimen name="dialog_grid_item_spacing_vertical">10dip</dimen>
+    <dimen name="dialog_edit_reason_height">62dip</dimen>
+    <dimen name="dialog_unit_text_size">16sp</dimen>
+    <dimen name="dialog_grid_item_text_size">13sp</dimen>
+    <dimen name="popuwindow_width">100dip</dimen>
+    <dimen name="popuwindow_yoff">7dip</dimen>
+
+    <!-- 上传车牌号照片 -->
+    <dimen name="upload_license_margin_horizontal">11dip</dimen>
+    <dimen name="upload_license_margin_top">20dip</dimen>
+    <dimen name="upload_license_drawable_padding_right">6dip</dimen>
+    <dimen name="upload_license_img_width">90dip</dimen>
+    <dimen name="upload_license_img_height">95dip</dimen>
+    <dimen name="upload_license_img_margin_left">11dip</dimen>
+    <dimen name="upload_license_title_margin_bottom">12dip</dimen>
+    <dimen name="upload_license_img_spacing">12dip</dimen>
+    <dimen name="upload_license_img_comment_spacing_vertical">6dip</dimen>
+    <dimen name="upload_license_img_commment_margin_bottom">16dip</dimen>
+    <dimen name="upload_license_tv_comment_padding">10dip</dimen>
+    <dimen name="upload_license_content_spacing">10dip</dimen>
+    <dimen name="upload_license_title_text_size">13sp</dimen>
+    <dimen name="upload_license_img_comment_text_size">12sp</dimen>
+    <dimen name="upload_license_comment_text_size">12sp</dimen>
+    <dimen name="common_text_size">14.7sp</dimen>
+
+    <!-- 上传车牌号照片-图片获取方式-对话框 -->
+    <dimen name="dialog_btn_list_margin_vertical">14dip</dimen>
+    <dimen name="dialog_btn_list_spacing_vertical">6dip</dimen>
+    <dimen name="dialog_btn_list_devider">-1dip</dimen>
+    <!-- 横向全屏的按钮高度 -->
+    <dimen name="btn_match_parent_height">36dip</dimen>
+
+    <!-- 通讯录页面 -->
+    <dimen name="address_list_item_height">50dip</dimen>
+    <dimen name="address_list_item_people_icon_margin_left">6dip</dimen>
+    <dimen name="address_list_item_people_icon_margin_right">6dip</dimen>
+    <dimen name="address_list_item_name_tv_width">68dip</dimen>
+    <dimen name="address_list_item_name_role_spacing_vertical">2dip</dimen>
+    <dimen name="address_list_item_main_text_size">14sp</dimen>
+    <dimen name="address_list_item_comment_text_size">13sp</dimen>
+
+    <!-- 买车详情-底部按钮 -->
+    <dimen name="buy_car_detail_bottom_btn_margin_vertical">10dip</dimen>
+    <dimen name="buy_car_detail_bottom_btn_margin_horizontal">12dip</dimen>
+    <dimen name="buy_car_detail_bottom_btn_spacing_horizontal">10dip</dimen>
+    <dimen name="buy_car_list_item_for_search">82dip</dimen>
+
+    <!-- 通讯录中的圆形按钮 -->
+    <dimen name="address_list_item_btn_margin_bottom">12dip</dimen>
+    <dimen name="address_list_item_btn_spacing">16dip</dimen>
+    <dimen name="address_list_item_btn_margin_right">10dip</dimen>
+    <dimen name="poppup_item_padding">6dip</dimen>
+
+    <!-- 店内买车和店内卖车-搜索项之间的间距 -->
+    <dimen name="sell_car_search_list_item_spacing_vertical">6dip</dimen>
+
+    <!-- 标题栏与下方内容区域的间距 -->
+    <dimen name="title_bar_margin_bottom">-2dip</dimen>
+
+    <!-- 信息管理列表图标间距 -->
+    <dimen name="item_icon_margin_left">5dip</dimen>
+    <dimen name="item_icon_margin_right">3dip</dimen>
+    <dimen name="main_bottom_tab_selected_height">49dip</dimen>
+    <dimen name="divider_height">0.75dip</dimen>
+    <dimen name="title_bar_right_button_height">32dip</dimen>
+    <dimen name="popup_item_min_height">55dip</dimen>
+
+    <!-- 意见反馈页面 -->
+    <dimen name="feedback_edit_margn">10dip</dimen>
+    <dimen name="feedback_edit_height">200dip</dimen>
+    <dimen name="alter_text_size">11sp</dimen>
+    <dimen name="feedback_edit_padding">12dip</dimen>
+    <dimen name="feedback_text_size">14sp</dimen>
+
+    <!-- 车价评估 -->
+    <dimen name="priceassess_bottom_text_padding_vertical">18dip</dimen>
+    <dimen name="priceassess_btcon_margtop">50dip</dimen>
+    <dimen name="priceassess_page_margin_top">20dip</dimen>
+    <dimen name="priceassess_page_margin_horizontal">14dip</dimen>
+    <dimen name="priceassess_car_info_txt_margin_bottom">12dip</dimen>
+    <dimen name="priceassess_notice_margin_vertical">14dip</dimen>
+    <dimen name="priceassess_btn_height">35dip</dimen>
+
+    <!-- 评估结果 -->
+    <dimen name="priceassess_result_layout_title_height">20dip</dimen>
+    <dimen name="priceassess_result_layout_title_padding_left">7dip</dimen>
+    <dimen name="priceassess_result_layout_item_margin_top">-2dip</dimen>
+    <dimen name="priceassess_result_notice_icon_width">40dip</dimen>
+    <dimen name="priceassess_result_notice_icon_txt_margin">6dip</dimen>
+    <dimen name="priceassess_result_notice_margin_top">24dip</dimen>
+    <dimen name="priceassess_result_notice_margin_bottom">20dip</dimen>
+    <dimen name="priceassess_bottom_text_size">16sp</dimen>
+    <dimen name="priceassess_the_same_text_size">18sp</dimen>
+    <dimen name="priceassess_result_layout_title_text_size">12sp</dimen>
+    <dimen name="priceassess_result_no_found_big_text_size">18sp</dimen>
+    <dimen name="priceassess_result_no_found_small_text_size">14sp</dimen>
+
+    <!-- 刷新缓存显示 -->
+    <dimen name="cache_show_height">80dip</dimen>
+    <dimen name="cache_show_padding">10dip</dimen>
+
+    <!-- VIN码显示的高度 -->
+    <dimen name="vin_detail_height">44dip</dimen>
+    <!-- 相机拍照界面 -->
+    <dimen name="camera_image_width">70dip</dimen>
+    <dimen name="camera_image_height">57dip</dimen>
+    <dimen name="camera_image_round_size">5dip</dimen>
+    <dimen name="camera_image_margn">10dip</dimen>
+    <dimen name="camera_image_delete">24dip</dimen>
+    <dimen name="camera_image_item_width">100dip</dimen>
+    <dimen name="camera_image_item_height">80dip</dimen>
+    <dimen name="camera_lin_item_height">80dip</dimen>
+    <dimen name="camera_done_height">20dip</dimen>
+    <dimen name="camera_done_margn">20dip</dimen>
+    <dimen name="camera_count_margn">10dip</dimen>
+    <dimen name="camera_left_tv_margn">33dip</dimen>
+    <dimen name="camera_fram_margn">15dip</dimen>
+    <dimen name="camera_dis_padding">10dip</dimen>
+    <dimen name="camera_dis_margn">15dip</dimen>
+    <dimen name="camera_text_size">15sp</dimen>
+    <!-- 涂鸦界面 -->
+    <dimen name="draw_margn">27dip</dimen>
+
+    <dimen name="item_expand_text_basic_margin_left">15dp</dimen>
+    <dimen name="item_expand_text_extra_margin_left">25dp</dimen>
+    
+    <dimen name="brand_img_width">54dp</dimen>
+    <dimen name="brand_img_height">40dp</dimen>
+    
+    <!-- 车友圈界面 -->
+    <dimen name="bottom_menu_title">13.3sp</dimen>
+    
+        <!-- 标签页面 -->
+    <dimen name="tag_page_image">17.3dip</dimen>
+    <dimen name="tag_page_image_spacing">1dip</dimen>
+</resources>
