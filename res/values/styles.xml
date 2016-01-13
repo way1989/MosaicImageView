@@ -177,7 +177,7 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="AppBaseTheme" parent="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar"></style>
+    <style name="AppBaseTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar"></style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
