@@ -14,6 +14,7 @@ import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -82,10 +83,6 @@ public class MosaicImageView extends View {
 	 *  当前笔触缩放倍数
 	 */
 	private float strokeMultiples = 1L;
-	/** 
-	 * 分割的块的大小：CUBE*CUBE 
-	 */
-	private int CUBE = 35;
 	/**
 	 * 用于对图片进行移动和缩放变换的矩阵
 	 */
@@ -218,14 +215,6 @@ public class MosaicImageView extends View {
 	 * 	移动时点击位置相对bitmap的Y轴坐标
 	 */
 	private float mY;
-	/**
-	 *  原本颜色数组 
-	 */
-	private int[][] color = null;
-	/**
-	 * 	马赛克颜色数组 
-	 */
-	private int[][] newColor = null;
     
 	/**
 	 * ZoomImageView构造函数，将当前操作状态设为STATUS_INIT。
@@ -295,6 +284,7 @@ public class MosaicImageView extends View {
 			if (event.getPointerCount() == 2) {
 				// 当有两个手指按在屏幕上时，计算两指之间的距离
 				lastFingerDis = distanceBetweenFingers(event);
+				isMultiTouch = true;
 			}
 			break;
 		case MotionEvent.ACTION_DOWN:
@@ -303,7 +293,7 @@ public class MosaicImageView extends View {
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			if (event.getPointerCount() == 1) {
+			if (event.getPointerCount() == 1 && !isMultiTouch) {
 					// 只有单指按在屏幕上移动时，为查看局部状态
 					currentStatus = STATUS_PART;
 			        mCurrentX = event.getX();  
@@ -375,6 +365,7 @@ public class MosaicImageView extends View {
 			}
 			break;
 		case MotionEvent.ACTION_UP:
+			isMultiTouch = false;
 			// 手指离开屏幕时将临时值还原
 			currentStatus = STATUS_ACTION_UP;
 			touch_up();
@@ -442,7 +433,7 @@ public class MosaicImageView extends View {
 	}
 
 	private void touch_up() {
-		mPath.lineTo(mX, mY);
+		//mPath.lineTo(mX, mY);
 		// commit the path to our offscreen
 		mCanvas.drawPath(mPath, mPaint);
 		// kill this so we don't double draw
@@ -653,7 +644,7 @@ public class MosaicImageView extends View {
 				currentBitmapHeight = bitmapHeight * initRatio;;
 			}
 			System.out.println("===================" + totalRatio);
-			color = new int[sourceBitmapCopy.getWidth()][sourceBitmapCopy.getHeight()];
+			/*color = new int[sourceBitmapCopy.getWidth()][sourceBitmapCopy.getHeight()];
 			newColor = new int[sourceBitmapCopy.getWidth()][sourceBitmapCopy.getHeight()];
 			for (int y = 0; y < sourceBitmapCopy.getHeight(); y++) {
 				for (int x = 0; x < sourceBitmapCopy.getWidth(); x++) { 
@@ -665,13 +656,58 @@ public class MosaicImageView extends View {
 				for (int y = 0; y < sourceBitmapCopy.getHeight(); y++) {
 					sourceBitmapCopy.setPixel(x, y, newColor[x][y]);
 				}
-			}
+			}*/
+			sourceBitmapCopy = getMosaic(sourceBitmapCopy);
 			canvas.drawBitmap(sourceBitmapCopy, matrix, null);
 			canvas.drawBitmap(sourceBitmap, matrix, null);
 			mPaint.setStrokeWidth(PAINT_STROKEWIDTH / totalRatio * strokeMultiples);
 		}
 	}
+	/**
+	 * 马赛克效果(Native)
+	 * 
+	 * @param bitmap
+	 *            原图
+	 * 
+	 * @return 马赛克图片
+	 * 
+	 */
+	public static Bitmap getMosaic(Bitmap bitmap) {
+		int width = bitmap.getWidth();
+		int height = bitmap.getHeight();
+		int radius = width / 30;
 
+		Bitmap mosaicBitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		Canvas canvas = new Canvas(mosaicBitmap);
+
+		int horCount = (int) Math.ceil(width / (float) radius);
+		int verCount = (int) Math.ceil(height / (float) radius);
+
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+
+		for (int horIndex = 0; horIndex < horCount; ++horIndex) {
+			for (int verIndex = 0; verIndex < verCount; ++verIndex) {
+				int l = radius * horIndex;
+				int t = radius * verIndex;
+				int r = l + radius;
+				if (r > width) {
+					r = width;
+				}
+				int b = t + radius;
+				if (b > height) {
+					b = height;
+				}
+				int color = bitmap.getPixel(l, t);
+				Rect rect = new Rect(l, t, r, b);
+				paint.setColor(color);
+				canvas.drawRect(rect, paint);
+			}
+		}
+		canvas.save();
+
+		return mosaicBitmap;
+	}
 	/***
 	 * 图片的缩放方法
 	 * 
@@ -843,82 +879,6 @@ public class MosaicImageView extends View {
 		bitmap = zoomImage(bitmap, newWidth, newHeight);
 		return bitmap;// 压缩好比例大小后再进行质量压缩
 	}
-
 	
-	/**
-	 * 计算马赛克后的颜色数组，即将图片分为很多块，每块的颜色值一样。
-	 * 
-	 * @param dst
-	 *            马赛克之后的颜色数组
-	 * @param src
-	 *            原来的颜色数组
-	 */
-	private void newColor(int[][] dst, int[][] src) {
-		
-		
-		int tmpColorR = 0, tmpColorG = 0, tmpColorB = 0;
-		int tmpColor;
-		int procTileW = 0, procTileH = 0;
-		int bitmapH = sourceBitmapCopy.getHeight();
-		int bitmapW = sourceBitmapCopy.getWidth();
-		
-		for (int row = 0; row < bitmapH;) {
-			procTileH = CUBE;
-			// 处理不足tileSize高色块
-			while (row + procTileH > bitmapH) {
-				procTileH--;
-			}
-			for (int col = 0; col < bitmapW;) {
-				tmpColorR = 0;
-				tmpColorG = 0;
-				tmpColorB = 0;
-				procTileW = CUBE;
-				// 处理不足tileSize宽色块
-				while (col + procTileW > bitmapW) {
-					procTileW--;
-				}
-				// 取出tileSize*tileSize大小的rgb颜色值
-				for (int i = 0; i < procTileH; i++) {
-					for (int j = 0; j < procTileW; j++) {
-						tmpColorR += Color.red(src[j + col][i + row]);
-						tmpColorG += Color.green(src[j + col][i + row]);
-						tmpColorB += Color.blue(src[j + col][i + row]);
-					}
-
-				}
-				tmpColorR /= procTileW * procTileH;
-				tmpColorG /= procTileW * procTileH;
-				tmpColorB /= procTileW * procTileH;
-				tmpColor = Color.rgb(tmpColorR, tmpColorG, tmpColorB);
-				// 填充tileSize*tileSize大小的马赛克色块
-				for (int i = 0; i < procTileH; i++) {
-					for (int j = 0; j < procTileW; j++) {
-						dst[j + col][i + row] = tmpColor;
-					}
-
-				}
-				col += procTileW;
-			}
-			row += procTileH;
-		}
-	}
-	
-	/**
-	 * 获得图片各个像素点值的数组
-	 * 
-	 * @return 颜色值数组
-	 */
-	public int[][] getColor() {
-		return color;
-	}
-
-	/**
-	 * 获得图片各个像素点马赛克效果后的新值
-	 * 
-	 * @return 颜色值数组
-	 */
-	public int[][] getNewColor() {
-		return newColor;
-	}
 
 }

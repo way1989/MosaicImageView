@@ -26,15 +26,15 @@ public class MainActivity extends Activity {
 				running();
 			}
 		});
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				int result = new NativeFFmpeg().FFmpegConvertGMp4ToGif("/mnt/sdcard/Movies/Telecine/Telecine_2016-01-10-15-11-05.mp4", "1500" , "15" , "3" , "10", "/mnt/sdcard/Movies/out.gif");
-				Log.i("way", "result = " + result);
-			}
-		}).start();
+//		new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				int result = new NativeFFmpeg().FFmpegConvertGMp4ToGif("/mnt/sdcard/Movies/Telecine/Telecine_2016-01-10-15-11-05.mp4", "1500" , "15" , "3" , "10", "/mnt/sdcard/Movies/out.gif");
+//				Log.i("way", "result = " + result);
+//			}
+//		}).start();
 	}
 
 	private void running() {
