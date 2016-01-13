@@ -222,11 +222,11 @@ public class MosaicImageView extends View {
 	 * @param context
 	 * @param attrs
 	 */
-	public MosaicImageView(Activity activity, AttributeSet attrs, String pathName, int width, int height) {
+	public MosaicImageView(Activity activity, AttributeSet attrs, int aaa, int width, int height) {
 		super(activity, attrs);
 		currentStatus = STATUS_INIT;
-		System.out.println("============" + pathName);
-		Bitmap bitmap = getimage(pathName, width, height);
+		System.out.println("============" + aaa);
+		Bitmap bitmap = getimage(aaa, width, height);
 		
 		sourceBitmap =  Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
 		sourceBitmapCopy = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
@@ -239,7 +239,7 @@ public class MosaicImageView extends View {
 		this.activity = activity;
 		mPaint = new Paint();
 		mPaint.setAlpha(0);
-		mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+		mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));//取两层绘制交集。显示上层。
 		mPaint.setAntiAlias(true);
 		
 		mPaint.setDither(true);
@@ -253,7 +253,7 @@ public class MosaicImageView extends View {
 	}
 	
 	
-	public void revocation(String pathName,int ww, int hh) {
+	public void revocation(int pathName,int ww, int hh) {
 		// TODO Auto-generated method stub
 		sourceBitmap.recycle();
 		sourceBitmap = null;
@@ -663,6 +663,134 @@ public class MosaicImageView extends View {
 			mPaint.setStrokeWidth(PAINT_STROKEWIDTH / totalRatio * strokeMultiples);
 		}
 	}
+	
+	/**
+	 * 绘制笔触大小
+	 * @param strokeMultiples
+	 * @param canvas
+	 */
+	public void drawStrokeSize(Canvas canvas) {
+		// TODO Auto-generated method stub
+		//底图  
+		canvas.drawBitmap(sourceBitmapCopy, matrix, null);
+		canvas.drawBitmap(sourceBitmap, matrix, null);
+		mCanvas.drawPath(mPath, mPaint);
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		//绘制绘制指示点原形边框
+		paint.setColor(getResources().getColor(R.color.mosaicblue));  
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(4f);
+		if(totalRatio > 1){
+			canvas.drawCircle(width / 2, height / 2, (PAINT_STROKEWIDTH - 4) / 2 * initRatio * strokeMultiples, paint);
+		} else {
+			canvas.drawCircle(width / 2, height / 2, (PAINT_STROKEWIDTH - 4) / 2 / initRatio * strokeMultiples, paint);
+		}
+	}
+	
+	
+	public void setStrokeMultiples(float strokeMultiples) {
+		this.strokeMultiples = strokeMultiples;
+		mPaint.setStrokeWidth(PAINT_STROKEWIDTH / totalRatio * strokeMultiples);
+		currentStatus = STATUS_DRAW_STOKE;
+		invalidate();
+	}
+	
+	public void removeStrokeView() {
+		// TODO Auto-generated method stub
+		currentStatus = STATUS_ACTION_UP;
+		invalidate();
+	}
+
+	/**
+	 * 对图片进行恢复
+	 * 
+	 * @param canvas
+	 */
+	private void replyPosition(Canvas canvas) {
+		matrix.reset();
+		// 先按照已有的缩放比例对图片进行缩放
+		matrix.postScale(totalRatio, totalRatio);
+		// 再根据移动距离进行偏移
+		matrix.postTranslate(totalTranslateX, totalTranslateY);
+		canvas.drawBitmap(sourceBitmapCopy, matrix, null);
+		canvas.drawBitmap(sourceBitmap, matrix, null);
+	}
+	
+	/**
+	 * 计算两个手指之间的距离。
+	 * 
+	 * @param event
+	 * @return 两个手指之间的距离
+	 */
+	private double distanceBetweenFingers(MotionEvent event) {
+		float disX = Math.abs(event.getX(0) - event.getX(1));
+		float disY = Math.abs(event.getY(0) - event.getY(1));
+		return Math.sqrt(disX * disX + disY * disY);
+	}
+
+	/**
+	 * 计算两个手指之间中心点的坐标。
+	 * 
+	 * @param event
+	 */
+	private void centerPointBetweenFingers(MotionEvent event) {
+		float xPoint0 = event.getX(0);
+		float yPoint0 = event.getY(0);
+		float xPoint1 = event.getX(1);
+		float yPoint1 = event.getY(1);
+		centerPointX = (xPoint0 + xPoint1) / 2;
+		centerPointY = (yPoint0 + yPoint1) / 2;
+	}
+	
+	/**
+	 * 计算移动时两个手指之间中心点的坐标。
+	 * 
+	 * @param event
+	 */
+	private void centerMovePointBetweenFingers(MotionEvent event) {
+		float xPoint0 = event.getX(0);
+		float yPoint0 = event.getY(0);
+		float xPoint1 = event.getX(1);
+		float yPoint1 = event.getY(1);
+		lastXMove = (xPoint0 + xPoint1) / 2;
+		lastYMove = (yPoint0 + yPoint1) / 2;
+	}
+
+	/** 
+	 * 合并两张bitmap为一张 
+	 * @param background 
+	 * @param foreground 
+	 * @return Bitmap 
+	 */  
+	public Bitmap combineBitmap(Bitmap background, Bitmap foreground) {  
+	    if (background == null) {  
+	        return null;  
+	    }  
+	    int bgWidth = background.getWidth();  
+	    int bgHeight = background.getHeight();  
+	    int fgWidth = foreground.getWidth();  
+	    int fgHeight = foreground.getHeight();  
+	    Bitmap newmap = Bitmap.createBitmap(bgWidth, bgHeight, Config.ARGB_8888);  
+	    Canvas canvas = new Canvas(newmap);  
+	    canvas.drawBitmap(background, 0, 0, null);  
+	    canvas.drawBitmap(foreground, (bgWidth - fgWidth) / 2,  
+	            (bgHeight - fgHeight) / 2, null);  
+	    canvas.save(Canvas.ALL_SAVE_FLAG);  
+	    canvas.restore();  
+	    return newmap;  
+	}  
+	
+	private Bitmap getimage(int aaa, int newWidth, int newHeight) {
+		BitmapFactory.Options newOpts = new BitmapFactory.Options();
+		// 开始读入图片，此时把options.inJustDecodeBounds 设回true了
+		newOpts.inJustDecodeBounds = false;
+		// 此时返回bm为空
+		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), aaa);
+		System.out.println("Bitmap:" + bitmap);
+		bitmap = zoomImage(bitmap, newWidth, newHeight);
+		return bitmap;// 压缩好比例大小后再进行质量压缩
+	}
 	/**
 	 * 马赛克效果(Native)
 	 * 
@@ -748,137 +876,5 @@ public class MosaicImageView extends View {
 				matrix, true);
 		return bgimage;
 	}
-
-	
-	/**
-	 * 绘制笔触大小
-	 * @param strokeMultiples
-	 * @param canvas
-	 */
-	public void drawStrokeSize(Canvas canvas) {
-		// TODO Auto-generated method stub
-		//底图  
-		canvas.drawBitmap(sourceBitmapCopy, matrix, null);
-		canvas.drawBitmap(sourceBitmap, matrix, null);
-		mCanvas.drawPath(mPath, mPaint);
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		//绘制绘制指示点原形边框
-		paint.setColor(getResources().getColor(R.color.mosaicblue));  
-		paint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(4f);
-		if(totalRatio > 1){
-			canvas.drawCircle(width / 2, height / 2, (PAINT_STROKEWIDTH - 4) / 2 * initRatio * strokeMultiples, paint);
-		} else {
-			canvas.drawCircle(width / 2, height / 2, (PAINT_STROKEWIDTH - 4) / 2 / initRatio * strokeMultiples, paint);
-		}
-	}
-	
-	
-	public void setStrokeMultiples(float strokeMultiples) {
-		this.strokeMultiples = strokeMultiples;
-		mPaint.setStrokeWidth(PAINT_STROKEWIDTH / totalRatio * strokeMultiples);
-		currentStatus = STATUS_DRAW_STOKE;
-		invalidate();
-	}
-	
-	public void removeStrokeView() {
-		// TODO Auto-generated method stub
-		currentStatus = STATUS_ACTION_UP;
-		invalidate();
-	}
-
-	/**
-	 * 对图片进行恢复
-	 * 
-	 * @param canvas
-	 */
-	private void replyPosition(Canvas canvas) {
-		matrix.reset();
-		// 先按照已有的缩放比例对图片进行缩放
-		matrix.postScale(totalRatio, totalRatio);
-		// 再根据移动距离进行偏移
-		matrix.postTranslate(totalTranslateX, totalTranslateY);
-		canvas.drawBitmap(sourceBitmapCopy, matrix, null);
-		canvas.drawBitmap(sourceBitmap, matrix, null);
-		Intent intent = new Intent(DrawPhotoActivity.ACTION_INIT);
-		activity.sendBroadcast(intent);
-	}
-	
-	/**
-	 * 计算两个手指之间的距离。
-	 * 
-	 * @param event
-	 * @return 两个手指之间的距离
-	 */
-	private double distanceBetweenFingers(MotionEvent event) {
-		float disX = Math.abs(event.getX(0) - event.getX(1));
-		float disY = Math.abs(event.getY(0) - event.getY(1));
-		return Math.sqrt(disX * disX + disY * disY);
-	}
-
-	/**
-	 * 计算两个手指之间中心点的坐标。
-	 * 
-	 * @param event
-	 */
-	private void centerPointBetweenFingers(MotionEvent event) {
-		float xPoint0 = event.getX(0);
-		float yPoint0 = event.getY(0);
-		float xPoint1 = event.getX(1);
-		float yPoint1 = event.getY(1);
-		centerPointX = (xPoint0 + xPoint1) / 2;
-		centerPointY = (yPoint0 + yPoint1) / 2;
-	}
-	
-	/**
-	 * 计算移动时两个手指之间中心点的坐标。
-	 * 
-	 * @param event
-	 */
-	private void centerMovePointBetweenFingers(MotionEvent event) {
-		float xPoint0 = event.getX(0);
-		float yPoint0 = event.getY(0);
-		float xPoint1 = event.getX(1);
-		float yPoint1 = event.getY(1);
-		lastXMove = (xPoint0 + xPoint1) / 2;
-		lastYMove = (yPoint0 + yPoint1) / 2;
-	}
-
-	/** 
-	 * 合并两张bitmap为一张 
-	 * @param background 
-	 * @param foreground 
-	 * @return Bitmap 
-	 */  
-	public Bitmap combineBitmap(Bitmap background, Bitmap foreground) {  
-	    if (background == null) {  
-	        return null;  
-	    }  
-	    int bgWidth = background.getWidth();  
-	    int bgHeight = background.getHeight();  
-	    int fgWidth = foreground.getWidth();  
-	    int fgHeight = foreground.getHeight();  
-	    Bitmap newmap = Bitmap.createBitmap(bgWidth, bgHeight, Config.ARGB_8888);  
-	    Canvas canvas = new Canvas(newmap);  
-	    canvas.drawBitmap(background, 0, 0, null);  
-	    canvas.drawBitmap(foreground, (bgWidth - fgWidth) / 2,  
-	            (bgHeight - fgHeight) / 2, null);  
-	    canvas.save(Canvas.ALL_SAVE_FLAG);  
-	    canvas.restore();  
-	    return newmap;  
-	}  
-	
-	private Bitmap getimage(String srcPath, int newWidth, int newHeight) {
-		BitmapFactory.Options newOpts = new BitmapFactory.Options();
-		// 开始读入图片，此时把options.inJustDecodeBounds 设回true了
-		newOpts.inJustDecodeBounds = false;
-		// 此时返回bm为空
-		Bitmap bitmap = ImageUtil.getLoacalBitmap(activity, srcPath);
-		System.out.println("Bitmap:" + bitmap);
-		bitmap = zoomImage(bitmap, newWidth, newHeight);
-		return bitmap;// 压缩好比例大小后再进行质量压缩
-	}
-	
 
 }
