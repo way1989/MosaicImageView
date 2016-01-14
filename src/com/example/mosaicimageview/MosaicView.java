@@ -75,7 +75,7 @@ public class MosaicView extends View {
 	/**
 	 * 笔触大小
 	 */
-	private static float PAINT_STROKEWIDTH = 30;
+	private static float mPaintStrokeWidth = 30;
 	/**
 	 * 当前笔触缩放倍数
 	 */
@@ -88,9 +88,9 @@ public class MosaicView extends View {
 	/**
 	 * 待展示的Bitmap对象
 	 */
-	public Bitmap mSourceBitmap;
+	private Bitmap mSourceBitmap;
 
-	public Bitmap mSourceBitmapBackground;
+	private Bitmap mMosaicBitmap;
 
 	/**
 	 * 记录当前操作的状态，可选值为STATUS_INIT、STATUS_ZOOM_OUT、STATUS_ZOOM_IN和STATUS_MOVE
@@ -208,6 +208,11 @@ public class MosaicView extends View {
 	 */
 	private float mY;
 
+	/**
+	 * 是否为多指触摸
+	 */
+	private boolean isMultiTouch;
+
 	public MosaicView(Context context) {
 		this(context, null);
 	}
@@ -224,7 +229,8 @@ public class MosaicView extends View {
 
 	private void init(Context context) {
 		mPreviewRadius = DensityUtil.dip2px(getContext(), 50f);
-		PAINT_STROKEWIDTH = DensityUtil.dip2px(getContext(), 12f);
+		mPaintStrokeWidth = DensityUtil.dip2px(getContext(), 12f);
+
 		mSourcePaint = new Paint();
 		mSourcePaint.setAlpha(0);
 		mSourcePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));// 取两层绘制交集。显示上层。
@@ -243,11 +249,11 @@ public class MosaicView extends View {
 				DensityUtil.getDisplayHeight(getContext()));
 
 		mSourceBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
-		mSourceBitmapBackground = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+		mMosaicBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
 		mSourceCanvas = new Canvas(mSourceBitmap);
 		mSourceCanvas.drawBitmap(bitmap, 0, 0, null);
 
-		Canvas canvas = new Canvas(mSourceBitmapBackground);
+		Canvas canvas = new Canvas(mMosaicBitmap);
 		canvas.drawBitmap(bitmap, 0, 0, null);
 		bitmap.recycle();
 		invalidate();
@@ -256,12 +262,12 @@ public class MosaicView extends View {
 	public void release() {
 		if (mSourceBitmap != null && !mSourceBitmap.isRecycled())
 			mSourceBitmap.recycle();
-		if (mSourceBitmapBackground != null && !mSourceBitmapBackground.isRecycled())
-			mSourceBitmapBackground.recycle();
+		if (mMosaicBitmap != null && !mMosaicBitmap.isRecycled())
+			mMosaicBitmap.recycle();
 		destroyDrawingCache();
 	}
 
-	public void revocation(Bitmap bitmap) {
+	public void reset(Bitmap bitmap) {
 		mSourceBitmap.recycle();
 		mSourceBitmap = null;
 
@@ -389,8 +395,6 @@ public class MosaicView extends View {
 		return true;
 	}
 
-	private boolean isMultiTouch;
-
 	/**
 	 * 根据currentStatus的值来决定对图片进行什么样的绘制操作。
 	 */
@@ -495,7 +499,7 @@ public class MosaicView extends View {
 		Path path = new Path();
 		path.addRect(0, 0, mPreviewRadius * 2, mPreviewRadius * 2, Direction.CW);
 		// 底图
-		canvas.drawBitmap(mSourceBitmapBackground, mMatrix, null);
+		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
 		mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
 
@@ -508,7 +512,7 @@ public class MosaicView extends View {
 		canvas.clipPath(path);
 		// 画局部图
 		canvas.translate(mPreviewRadius - partCenterX * mFactor, mPreviewRadius - partCenterY * mFactor);
-		canvas.drawBitmap(mSourceBitmapBackground, mMatrix, null);
+		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
@@ -516,21 +520,21 @@ public class MosaicView extends View {
 		paint.setColor(getResources().getColor(R.color.mosaicdark));
 		paint.setStyle(Style.FILL);// 实心图案
 		if (mInitRatio > 1) {
-			canvas.drawCircle(circleCenterX, circleCenterY, (PAINT_STROKEWIDTH - 5) / 2 * mInitRatio * mStrokeMultiples,
+			canvas.drawCircle(circleCenterX, circleCenterY, (mPaintStrokeWidth - 5) / 2 * mInitRatio * mStrokeMultiples,
 					paint);
 		} else {
-			canvas.drawCircle(circleCenterX, circleCenterY, (PAINT_STROKEWIDTH - 5) / 2 / mInitRatio * mStrokeMultiples,
+			canvas.drawCircle(circleCenterX, circleCenterY, (mPaintStrokeWidth - 5) / 2 / mInitRatio * mStrokeMultiples,
 					paint);
 		}
-		// 绘制绘制指示点原形边框
+		// 绘制绘制指示点圆形形边框
 		paint.setColor(getResources().getColor(R.color.mosaicblue));
 		paint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(4f);
+		paint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2f));
 		if (mTotalRatio > 1) {
-			canvas.drawCircle(circleCenterX, circleCenterY, (PAINT_STROKEWIDTH - 4) / 2 * mInitRatio * mStrokeMultiples,
+			canvas.drawCircle(circleCenterX, circleCenterY, (mPaintStrokeWidth - DensityUtil.dip2px(getContext(), 2f)) / 2 * mInitRatio * mStrokeMultiples,
 					paint);
 		} else {
-			canvas.drawCircle(circleCenterX, circleCenterY, (PAINT_STROKEWIDTH - 4) / 2 / mInitRatio * mStrokeMultiples,
+			canvas.drawCircle(circleCenterX, circleCenterY, (mPaintStrokeWidth - DensityUtil.dip2px(getContext(), 2f)) / 2 / mInitRatio * mStrokeMultiples,
 					paint);
 		}
 
@@ -549,7 +553,7 @@ public class MosaicView extends View {
 	 * @param canvas
 	 */
 	private void zoom(Canvas canvas) {
-		mSourcePaint.setStrokeWidth(PAINT_STROKEWIDTH / mTotalRatio * mStrokeMultiples);
+		mSourcePaint.setStrokeWidth(mPaintStrokeWidth / mTotalRatio * mStrokeMultiples);
 		mMatrix.reset();
 		// 将图片按总缩放比例进行缩放
 		mMatrix.postScale(mTotalRatio, mTotalRatio);
@@ -587,7 +591,7 @@ public class MosaicView extends View {
 		mTotalTranslateY = translateY;
 		mCurrentBitmapWidth = scaledWidth;
 		mCurrentBitmapHeight = scaledHeight;
-		canvas.drawBitmap(mSourceBitmapBackground, mMatrix, null);
+		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
 	}
 
@@ -607,7 +611,7 @@ public class MosaicView extends View {
 		mMatrix.postTranslate(translateX, translateY);
 		mTotalTranslateX = translateX;
 		mTotalTranslateY = translateY;
-		canvas.drawBitmap(mSourceBitmapBackground, mMatrix, null);
+		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
 	}
 
@@ -661,27 +665,12 @@ public class MosaicView extends View {
 				mTotalTranslateX = translateX;
 				mTotalTranslateY = translateY;
 				mCurrentBitmapWidth = bitmapWidth * mInitRatio;
-				;
 				mCurrentBitmapHeight = bitmapHeight * mInitRatio;
-				;
 			}
-			System.out.println("===================" + mTotalRatio);
-			/*
-			 * color = new
-			 * int[sourceBitmapCopy.getWidth()][sourceBitmapCopy.getHeight()];
-			 * newColor = new
-			 * int[sourceBitmapCopy.getWidth()][sourceBitmapCopy.getHeight()];
-			 * for (int y = 0; y < sourceBitmapCopy.getHeight(); y++) { for (int
-			 * x = 0; x < sourceBitmapCopy.getWidth(); x++) { color[x][y] =
-			 * sourceBitmapCopy.getPixel(x, y); } } newColor(newColor, color);
-			 * for (int x = 0; x < sourceBitmapCopy.getWidth(); x++) { for (int
-			 * y = 0; y < sourceBitmapCopy.getHeight(); y++) {
-			 * sourceBitmapCopy.setPixel(x, y, newColor[x][y]); } }
-			 */
-			mSourceBitmapBackground = getMosaic(mSourceBitmapBackground);
-			canvas.drawBitmap(mSourceBitmapBackground, mMatrix, null);
+			mMosaicBitmap = getMosaic(mMosaicBitmap);
+			canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 			canvas.drawBitmap(mSourceBitmap, mMatrix, null);
-			mSourcePaint.setStrokeWidth(PAINT_STROKEWIDTH / mTotalRatio * mStrokeMultiples);
+			mSourcePaint.setStrokeWidth(mPaintStrokeWidth / mTotalRatio * mStrokeMultiples);
 		}
 	}
 
@@ -692,9 +681,8 @@ public class MosaicView extends View {
 	 * @param canvas
 	 */
 	public void drawStrokeSize(Canvas canvas) {
-		// TODO Auto-generated method stub
 		// 底图
-		canvas.drawBitmap(mSourceBitmapBackground, mMatrix, null);
+		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
 		mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
 		Paint paint = new Paint();
@@ -705,16 +693,16 @@ public class MosaicView extends View {
 		paint.setStrokeWidth(4f);
 		if (mTotalRatio > 1) {
 			canvas.drawCircle(mViewWidth / 2, mViewHeight / 2,
-					(PAINT_STROKEWIDTH - 4) / 2 * mInitRatio * mStrokeMultiples, paint);
+					(mPaintStrokeWidth - 4) / 2 * mInitRatio * mStrokeMultiples, paint);
 		} else {
 			canvas.drawCircle(mViewWidth / 2, mViewHeight / 2,
-					(PAINT_STROKEWIDTH - 4) / 2 / mInitRatio * mStrokeMultiples, paint);
+					(mPaintStrokeWidth - 4) / 2 / mInitRatio * mStrokeMultiples, paint);
 		}
 	}
 
 	public void setStrokeMultiples(float strokeMultiples) {
 		this.mStrokeMultiples = strokeMultiples;
-		mSourcePaint.setStrokeWidth(PAINT_STROKEWIDTH / mTotalRatio * strokeMultiples);
+		mSourcePaint.setStrokeWidth(mPaintStrokeWidth / mTotalRatio * strokeMultiples);
 		mCurrentStatus = STATUS_DRAW_STOKE;
 		invalidate();
 	}
@@ -736,7 +724,7 @@ public class MosaicView extends View {
 		mMatrix.postScale(mTotalRatio, mTotalRatio);
 		// 再根据移动距离进行偏移
 		mMatrix.postTranslate(mTotalTranslateX, mTotalTranslateY);
-		canvas.drawBitmap(mSourceBitmapBackground, mMatrix, null);
+		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
 	}
 
@@ -788,16 +776,16 @@ public class MosaicView extends View {
 	 * @return Bitmap
 	 */
 	public Bitmap getMosaicBitmap() {
-		if (mSourceBitmapBackground == null) {
+		if (mMosaicBitmap == null) {
 			return null;
 		}
-		int bgWidth = mSourceBitmapBackground.getWidth();
-		int bgHeight = mSourceBitmapBackground.getHeight();
+		int bgWidth = mMosaicBitmap.getWidth();
+		int bgHeight = mMosaicBitmap.getHeight();
 		int fgWidth = mSourceBitmap.getWidth();
 		int fgHeight = mSourceBitmap.getHeight();
 		Bitmap newmap = Bitmap.createBitmap(bgWidth, bgHeight, Config.ARGB_8888);
 		Canvas canvas = new Canvas(newmap);
-		canvas.drawBitmap(mSourceBitmapBackground, 0, 0, null);
+		canvas.drawBitmap(mMosaicBitmap, 0, 0, null);
 		canvas.drawBitmap(mSourceBitmap, (bgWidth - fgWidth) / 2, (bgHeight - fgHeight) / 2, null);
 		canvas.save(Canvas.ALL_SAVE_FLAG);
 		canvas.restore();
