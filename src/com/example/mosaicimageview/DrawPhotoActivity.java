@@ -4,14 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -26,63 +22,46 @@ import android.widget.Toast;
 
 public class DrawPhotoActivity extends Activity {
 
-	/** 涂鸦控件的容器 **/
-	public LinearLayout imageContent;
-	/** 涂鸦控件 **/
-	private MosaicImageView touchView;
+	public LinearLayout mMosaicViewContent;
+	private MosaicView mMosaicView;
 	/** 完成按钮 **/
-	public TextView overBt;
+	public TextView mFinishBtn;
 	/** 返回按钮（左上角） */
-	public ImageButton backIB = null;
-	/** 完成按钮（右上角） */
-	public Button finishBtn = null;
+	public ImageButton mBackBtn = null;
 	/** 撤销文字 **/
-	public TextView cancelText;
-	/** 是否为涂鸦 如果是涂鸦 不能删除之前的照片 **/
-	public boolean isReDraw = false;
-	Intent intent = null;
-	public Context context;
+	public TextView mCancelBtn;
 
 	/** 回调接口 */
-	private SeekBar seekBar;
+	private SeekBar mMosaicSizeSeekBar;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.draw_photo);
 		initView();
-		context = this;
-
-		WindowManager manager = DrawPhotoActivity.this.getWindowManager();
-		int ww = manager.getDefaultDisplay().getWidth();// 这里设置高度
-		int hh = manager.getDefaultDisplay().getHeight();// 这里设置宽度为
 		// 生成画图视图
-		touchView = new MosaicImageView(DrawPhotoActivity.this);
-		touchView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.raw.aaa));
-		if (touchView != null) {
-			imageContent.removeView(touchView);
+		mMosaicView = new MosaicView(DrawPhotoActivity.this);
+		mMosaicView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.raw.aaa));
+		if (mMosaicView != null) {
+			mMosaicViewContent.removeView(mMosaicView);
 		}
-		touchView.destroyDrawingCache();
-		imageContent.addView(touchView);
+		mMosaicView.destroyDrawingCache();
+		mMosaicViewContent.addView(mMosaicView);
 
 	}
 
 	private void initView() {
-		imageContent = (LinearLayout) findViewById(R.id.draw_photo_view);
-		backIB = (ImageButton) findViewById(R.id.title_bar_left_btn);
-		backIB.setVisibility(View.VISIBLE);
-		finishBtn = (Button) findViewById(R.id.title_bar_right_btn);
-		finishBtn.setBackgroundResource(R.drawable.selector_round_green_btn);
-		finishBtn.setVisibility(View.GONE);
-		overBt = (TextView) findViewById(R.id.draw_ok_text);
-		cancelText = (TextView) findViewById(R.id.draw_photo_cancel);
-		seekBar = (SeekBar) findViewById(R.id.seekBar);
-		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+		mMosaicViewContent = (LinearLayout) findViewById(R.id.draw_photo_view);
+		mBackBtn = (ImageButton) findViewById(R.id.title_bar_left_btn);
+		mBackBtn.setVisibility(View.VISIBLE);
+		mFinishBtn = (TextView) findViewById(R.id.draw_ok_text);
+		mCancelBtn = (TextView) findViewById(R.id.draw_photo_cancel);
+		mMosaicSizeSeekBar = (SeekBar) findViewById(R.id.seekBar);
+		mMosaicSizeSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			int progress = 0;
 
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
-				// TODO Auto-generated method stub
 				if (progress > 0 && progress < 12.5) {
 					seekBar.setProgress(0);
 				} else if (progress > 12.5 && progress < 25) {
@@ -100,51 +79,32 @@ public class DrawPhotoActivity extends Activity {
 				} else if (progress > 87.5 && progress < 100) {
 					seekBar.setProgress(100);
 				}
-				touchView.setStrokeMultiples(1 + (float) (progress / 50.0));
-				touchView.removeStrokeView();
+				mMosaicView.setStrokeMultiples(1 + (float) (progress / 50.0));
+				mMosaicView.removeStrokeView();
 			}
 
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				// TODO Auto-generated method stub
 				this.progress = progress;
-				// System.out.println(progress);
-				touchView.setStrokeMultiples(1 + (float) (progress / 100.0));
+				mMosaicView.setStrokeMultiples(1 + (float) (progress / 100.0));
 			}
 		});
-		backIB.setOnClickListener(new View.OnClickListener() {
+		mBackBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				try {
-					touchView.sourceBitmap.recycle();
-					touchView.sourceBitmapCopy.recycle();
-					touchView.destroyDrawingCache();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				mMosaicView.release();
 				finish();
 			}
 		});
-		finishBtn.setOnClickListener(new View.OnClickListener() {
-
+		mFinishBtn.setOnClickListener(new View.OnClickListener() {// 完成编辑按钮
 			@Override
 			public void onClick(View v) {
-				touchView.sourceBitmap.recycle();
-				touchView.sourceBitmapCopy.recycle();
-				touchView.destroyDrawingCache();
-				finish();
-			}
-		});
-		overBt.setOnClickListener(new View.OnClickListener() {// 完成编辑按钮
-			@Override
-			public void onClick(View v) {
-				overBt.setEnabled(false);
+				mFinishBtn.setEnabled(false);
 				// 新建一个文件保存照片
 				File f = new File(GlobalData.tempImagePaht + "/" + System.currentTimeMillis() + ".jpg");
 				if (!f.exists()) {
@@ -154,19 +114,13 @@ public class DrawPhotoActivity extends Activity {
 						}
 						f.createNewFile();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 				try {
-					Bitmap saveBitmap = touchView.getMosaicBitmap();
+					Bitmap saveBitmap = mMosaicView.getMosaicBitmap();
 					ImageUtil.saveMyBitmap(f, saveBitmap);// 将图片重新存入SD卡
-					if (touchView.sourceBitmapCopy != null) {
-						touchView.sourceBitmapCopy.recycle();
-					}
-					touchView.sourceBitmap.recycle();
-					saveBitmap.recycle();
-					touchView.destroyDrawingCache();
+					mMosaicView.release();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -175,7 +129,7 @@ public class DrawPhotoActivity extends Activity {
 			}
 		});
 
-		cancelText.setOnClickListener(new View.OnClickListener() {// 撤销按钮
+		mCancelBtn.setOnClickListener(new View.OnClickListener() {// 撤销按钮
 			@Override
 			public void onClick(View v) {
 				cancelDrawImage();
@@ -185,11 +139,10 @@ public class DrawPhotoActivity extends Activity {
 
 	/** 撤销方法 **/
 	public void cancelDrawImage() {
-		touchView.destroyDrawingCache();
-		touchView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.raw.aaa));
-		// OME--
-		if (imageContent.getChildCount() == 0) {
-			imageContent.addView(touchView);
+		mMosaicView.destroyDrawingCache();
+		mMosaicView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.raw.aaa));
+		if (mMosaicViewContent.getChildCount() == 0) {
+			mMosaicViewContent.addView(mMosaicView);
 		}
 	}
 
