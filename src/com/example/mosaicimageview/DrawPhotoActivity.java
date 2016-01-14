@@ -159,7 +159,7 @@ public class DrawPhotoActivity extends Activity {
 					}
 				}
 				try {
-					Bitmap saveBitmap = touchView.combineBitmap(touchView.sourceBitmapCopy, touchView.sourceBitmap);
+					Bitmap saveBitmap = touchView.getMosaicBitmap();
 					ImageUtil.saveMyBitmap(f, saveBitmap);// 将图片重新存入SD卡
 					if (touchView.sourceBitmapCopy != null) {
 						touchView.sourceBitmapCopy.recycle();

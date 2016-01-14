@@ -292,7 +292,7 @@ public class MosaicImageView extends View {
 			break;
 		case MotionEvent.ACTION_DOWN:
 			if (event.getPointerCount() == 1) {
-				touch_down((event.getX() - totalTranslateX) / totalRatio, (event.getY() - totalTranslateY) / totalRatio);
+				touchDown((event.getX() - totalTranslateX) / totalRatio, (event.getY() - totalTranslateY) / totalRatio);
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -301,7 +301,7 @@ public class MosaicImageView extends View {
 					currentStatus = STATUS_PART;
 			        mCurrentX = event.getX();  
 			        mCurrentY = event.getY();  
-					touch_move((mCurrentX - totalTranslateX) / totalRatio, (mCurrentY - totalTranslateY) / totalRatio);
+					touchMove((mCurrentX - totalTranslateX) / totalRatio, (mCurrentY - totalTranslateY) / totalRatio);
 					invalidate();
 			} else if (event.getPointerCount() == 2) {
 				//拖动
@@ -371,7 +371,7 @@ public class MosaicImageView extends View {
 			isMultiTouch = false;
 			// 手指离开屏幕时将临时值还原
 			currentStatus = STATUS_ACTION_UP;
-			touch_up();
+			touchUp();
 			invalidate();
 			lastXMove = -1;
 			lastYMove = -1;
@@ -420,14 +420,14 @@ public class MosaicImageView extends View {
 	}
 
 	
-	private void touch_down(float x, float y) {
+	private void touchDown(float x, float y) {
 		mPath.reset();
 		mPath.moveTo(x, y);
 		mX = x;
 		mY = y;
 	}
 
-	private void touch_move(float x, float y) {
+	private void touchMove(float x, float y) {
 		float dx = Math.abs(x - mX);
 		float dy = Math.abs(y - mY);
 		if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
@@ -437,7 +437,7 @@ public class MosaicImageView extends View {
 		}
 	}
 
-	private void touch_up() {
+	private void touchUp() {
 		//mPath.lineTo(mX, mY);
 		// commit the path to our offscreen
 		mCanvas.drawPath(mPath, mPaint);
@@ -768,34 +768,24 @@ public class MosaicImageView extends View {
 	 * @param foreground 
 	 * @return Bitmap 
 	 */  
-	public Bitmap combineBitmap(Bitmap background, Bitmap foreground) {  
-	    if (background == null) {  
+	public Bitmap getMosaicBitmap() {  
+	    if (sourceBitmapCopy == null) {  
 	        return null;  
 	    }  
-	    int bgWidth = background.getWidth();  
-	    int bgHeight = background.getHeight();  
-	    int fgWidth = foreground.getWidth();  
-	    int fgHeight = foreground.getHeight();  
+	    int bgWidth = sourceBitmapCopy.getWidth();  
+	    int bgHeight = sourceBitmapCopy.getHeight();  
+	    int fgWidth = sourceBitmap.getWidth();  
+	    int fgHeight = sourceBitmap.getHeight();  
 	    Bitmap newmap = Bitmap.createBitmap(bgWidth, bgHeight, Config.ARGB_8888);  
 	    Canvas canvas = new Canvas(newmap);  
-	    canvas.drawBitmap(background, 0, 0, null);  
-	    canvas.drawBitmap(foreground, (bgWidth - fgWidth) / 2,  
+	    canvas.drawBitmap(sourceBitmapCopy, 0, 0, null);  
+	    canvas.drawBitmap(sourceBitmap, (bgWidth - fgWidth) / 2,  
 	            (bgHeight - fgHeight) / 2, null);  
 	    canvas.save(Canvas.ALL_SAVE_FLAG);  
 	    canvas.restore();  
 	    return newmap;  
 	}  
 	
-	private Bitmap getimage(int aaa, int newWidth, int newHeight) {
-		BitmapFactory.Options newOpts = new BitmapFactory.Options();
-		// 开始读入图片，此时把options.inJustDecodeBounds 设回true了
-		newOpts.inJustDecodeBounds = false;
-		// 此时返回bm为空
-		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), aaa);
-		System.out.println("Bitmap:" + bitmap);
-		bitmap = zoomImage(bitmap, newWidth, newHeight);
-		return bitmap;// 压缩好比例大小后再进行质量压缩
-	}
 	/**
 	 * 马赛克效果(Native)
 	 * 
