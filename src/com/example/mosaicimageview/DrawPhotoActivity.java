@@ -1,27 +1,14 @@
 package com.example.mosaicimageview;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -70,7 +57,8 @@ public class DrawPhotoActivity extends Activity {
 		int ww = manager.getDefaultDisplay().getWidth();// 这里设置高度
 		int hh = manager.getDefaultDisplay().getHeight();// 这里设置宽度为
 		// 生成画图视图
-		touchView = new MosaicImageView(DrawPhotoActivity.this, null, R.raw.aaa, ww, hh);
+		touchView = new MosaicImageView(DrawPhotoActivity.this);
+		touchView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.raw.aaa));
 		if (touchView != null) {
 			imageContent.removeView(touchView);
 		}
@@ -112,7 +100,7 @@ public class DrawPhotoActivity extends Activity {
 				} else if (progress > 87.5 && progress < 100) {
 					seekBar.setProgress(100);
 				}
-				touchView.setStrokeMultiples(1 + (float) (progress / 100.0));
+				touchView.setStrokeMultiples(1 + (float) (progress / 50.0));
 				touchView.removeStrokeView();
 			}
 
@@ -196,14 +184,9 @@ public class DrawPhotoActivity extends Activity {
 	}
 
 	/** 撤销方法 **/
-	@SuppressWarnings("deprecation")
-	@SuppressLint("HandlerLeak")
 	public void cancelDrawImage() {
 		touchView.destroyDrawingCache();
-		WindowManager manager = DrawPhotoActivity.this.getWindowManager();
-		int ww = manager.getDefaultDisplay().getWidth();// 这里设置高度
-		int hh = manager.getDefaultDisplay().getHeight();// 这里设置宽度为
-		touchView.revocation(R.raw.aaa, ww, hh);
+		touchView.setSourceBitmap(BitmapFactory.decodeResource(getResources(), R.raw.aaa));
 		// OME--
 		if (imageContent.getChildCount() == 0) {
 			imageContent.addView(touchView);

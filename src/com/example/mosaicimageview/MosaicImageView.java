@@ -1,7 +1,7 @@
 package com.example.mosaicimageview;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -66,7 +66,7 @@ public class MosaicImageView extends View {
     /** 
      * 放大镜的半径   
 	 */
-    private static final int RADIUS = 80;  
+    private static  int RADIUS = 100;  
     /**  
      * 放大倍数
      */
@@ -78,7 +78,7 @@ public class MosaicImageView extends View {
 	/**
 	 * 	笔触大小
 	 */
-	private static final float PAINT_STROKEWIDTH = 20;
+	private static  float PAINT_STROKEWIDTH = 30;
 	/**
 	 *  当前笔触缩放倍数
 	 */
@@ -194,11 +194,6 @@ public class MosaicImageView extends View {
     private boolean partIsLeft = true;
     
     /** 
-     * 上下文变量
-     */
-    Activity activity;
-    
-    /** 
      * 前景图绘制板
      */
 	private Canvas mCanvas;
@@ -215,28 +210,27 @@ public class MosaicImageView extends View {
 	 * 	移动时点击位置相对bitmap的Y轴坐标
 	 */
 	private float mY;
-    
+	public MosaicImageView(Context context){
+		this(context, null);
+	}
 	/**
 	 * ZoomImageView构造函数，将当前操作状态设为STATUS_INIT。
 	 * 
 	 * @param context
 	 * @param attrs
 	 */
-	public MosaicImageView(Activity activity, AttributeSet attrs, int aaa, int width, int height) {
-		super(activity, attrs);
-		currentStatus = STATUS_INIT;
-		System.out.println("============" + aaa);
-		Bitmap bitmap = getimage(aaa, width, height);
+	public MosaicImageView(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
 		
-		sourceBitmap =  Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
-		sourceBitmapCopy = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
-		mCanvas = new Canvas(sourceBitmap);
-		mCanvas.drawBitmap(bitmap, 0, 0, null);
-
-		Canvas canvas = new Canvas(sourceBitmapCopy);
-		canvas.drawBitmap(bitmap, 0, 0, null);
-		
-		this.activity = activity;
+	}
+	public MosaicImageView(Context context, AttributeSet attrs, int style) {
+		super(context, attrs, style);
+		init(context);
+	}
+	
+	private void init(Context context) {
+		RADIUS = DensityUtil.dip2px(getContext(), 50f);
+		PAINT_STROKEWIDTH = DensityUtil.dip2px(getContext(), 12f);
 		mPaint = new Paint();
 		mPaint.setAlpha(0);
 		mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));//取两层绘制交集。显示上层。
@@ -247,18 +241,27 @@ public class MosaicImageView extends View {
 		mPaint.setStrokeJoin(Paint.Join.ROUND);
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
 		mPath = new Path();
+	}
+	
+	public void setSourceBitmap(Bitmap bitmap){
+		currentStatus = STATUS_INIT;
+		bitmap = zoomImage(bitmap, DensityUtil.getDisplayWidth(getContext()), DensityUtil.getDisplayHeight(getContext()));
 		
+		sourceBitmap =  Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+		sourceBitmapCopy = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+		mCanvas = new Canvas(sourceBitmap);
+		mCanvas.drawBitmap(bitmap, 0, 0, null);
+
+		Canvas canvas = new Canvas(sourceBitmapCopy);
+		canvas.drawBitmap(bitmap, 0, 0, null);
 		bitmap.recycle();
 		invalidate();
 	}
-	
-	
-	public void revocation(int pathName,int ww, int hh) {
-		// TODO Auto-generated method stub
+	public void revocation(Bitmap bitmap) {
 		sourceBitmap.recycle();
 		sourceBitmap = null;
 		
-		Bitmap bitmap = getimage(pathName, ww, hh);
+		bitmap = zoomImage(bitmap, DensityUtil.getDisplayWidth(getContext()), DensityUtil.getDisplayHeight(getContext()));
 		sourceBitmap =  Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
 		mCanvas = new Canvas(sourceBitmap);
 		mCanvas.drawBitmap(bitmap, 0, 0, null);
@@ -384,6 +387,8 @@ public class MosaicImageView extends View {
 	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
+		if(sourceBitmap == null)
+			return;
 		super.onDraw(canvas);
 		switch (currentStatus) {
 			case STATUS_PART:
