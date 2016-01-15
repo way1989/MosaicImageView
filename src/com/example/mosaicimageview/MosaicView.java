@@ -1,5 +1,8 @@
 package com.example.mosaicimageview;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -24,7 +27,27 @@ import android.view.View;
  * @author way
  */
 public class MosaicView extends View {
+	public class MosaicPath {
+		/**
+		 * 绘画路径
+		 */
+		public Path drawPath;
 
+		/**
+		 * 绘画粗细
+		 */
+		public float paintWidth;
+		
+		/**
+		 * 画笔类型
+		 */
+		public MosaicType mosaicType;
+
+	}
+	
+	public static enum MosaicType {
+		MOSAIC, BLUR, PICTURE, ERASER
+	}
 	/**
 	 * 初始化状态常量
 	 */
@@ -198,7 +221,7 @@ public class MosaicView extends View {
 	 * 绘画笔
 	 */
 	private Paint mSourcePaint;
-	private Path mTouchPath;
+	//private Path mTouchPath;
 	/**
 	 * 移动时点击位置相对bitmap的X轴坐标
 	 */
@@ -240,7 +263,7 @@ public class MosaicView extends View {
 		mSourcePaint.setStyle(Paint.Style.STROKE);
 		mSourcePaint.setStrokeJoin(Paint.Join.ROUND);
 		mSourcePaint.setStrokeCap(Paint.Cap.ROUND);
-		mTouchPath = new Path();
+		//mTouchPath = new Path();
 	}
 
 	public void setSourceBitmap(Bitmap bitmap) {
@@ -268,7 +291,9 @@ public class MosaicView extends View {
 	}
 
 	public void reset(Bitmap bitmap) {
-		mSourceBitmap.recycle();
+		touchPaths.clear();
+		if(mSourceBitmap != null && !mSourceBitmap.isRecycled())
+			mSourceBitmap.recycle();
 		mSourceBitmap = null;
 
 		bitmap = zoomImage(bitmap, DensityUtil.getDisplayWidth(getContext()),
@@ -427,14 +452,20 @@ public class MosaicView extends View {
 			drawStrokeSize(canvas);
 			break;
 		default:
-			canvas.drawBitmap(mSourceBitmap, mMatrix, null);
+			//canvas.drawBitmap(mSourceBitmap, mMatrix, null);
 			break;
 		}
 	}
 
 	private void touchDown(float x, float y) {
-		mTouchPath.reset();
-		mTouchPath.moveTo(x, y);
+		//mTouchPath.reset();
+		//mTouchPath.moveTo(x, y);
+		mosaicPath = new MosaicPath();
+		mosaicPath.drawPath = new Path();
+		mosaicPath.drawPath.moveTo(x, y);
+		mosaicPath.paintWidth = mPaintStrokeWidth / mTotalRatio * mStrokeMultiples;
+		mosaicPath.mosaicType = mMosaicType;
+		touchPaths.add(mosaicPath);
 		mX = x;
 		mY = y;
 	}
@@ -443,7 +474,9 @@ public class MosaicView extends View {
 		float dx = Math.abs(x - mX);
 		float dy = Math.abs(y - mY);
 		if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-			mTouchPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+			if(mosaicPath != null)
+				mosaicPath.drawPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+			//mTouchPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
 			mX = x;
 			mY = y;
 		}
@@ -452,11 +485,15 @@ public class MosaicView extends View {
 	private void touchUp() {
 		// mPath.lineTo(mX, mY);
 		// commit the path to our offscreen
-		mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
+		//mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
 		// kill this so we don't double draw
-		mTouchPath.reset();
+		//mTouchPath.reset();
 	}
-
+	
+	private MosaicType mMosaicType = MosaicType.MOSAIC;
+	private List<MosaicPath> touchPaths = new ArrayList<MosaicPath>();
+	private MosaicPath mosaicPath;
+	
 	/**
 	 * 局部图片窗口的绘制
 	 * 
@@ -501,7 +538,9 @@ public class MosaicView extends View {
 		// 底图
 		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
-		mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
+		for(MosaicPath mosaicPath : touchPaths)
+			mSourceCanvas.drawPath(mosaicPath.drawPath, mSourcePaint);
+		//mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
 
 		// 剪切
 		if (IsPreviewLeft) {
@@ -680,11 +719,13 @@ public class MosaicView extends View {
 	 * @param mStrokeMultiples
 	 * @param canvas
 	 */
-	public void drawStrokeSize(Canvas canvas) {
+	private void drawStrokeSize(Canvas canvas) {
 		// 底图
 		canvas.drawBitmap(mMosaicBitmap, mMatrix, null);
 		canvas.drawBitmap(mSourceBitmap, mMatrix, null);
-		mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
+		//mSourceCanvas.drawPath(mTouchPath, mSourcePaint);
+		//for(MosaicPath mosaicPath : touchPaths)
+		//	mSourceCanvas.drawPath(mosaicPath.drawPath, mSourcePaint);
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
 		// 绘制绘制指示点原形边框
@@ -708,7 +749,6 @@ public class MosaicView extends View {
 	}
 
 	public void removeStrokeView() {
-		// TODO Auto-generated method stub
 		mCurrentStatus = STATUS_ACTION_UP;
 		invalidate();
 	}
